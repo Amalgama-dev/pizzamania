@@ -1,0 +1,44 @@
+{% extends 'main/index.html' %}
+
+{% block content %}
+
+
+<div class="container" style="background-color: white;">
+    <div class="row">
+        <div class="d-flex justify-content-center col">
+            <img src="{{ product.image.url }}" class="img-fluid">
+        </div> 
+        <div class="col">
+            <div class="row">
+                <h4>{{ product.title }}</h4>
+                <p>Цена: {{ product.price }} грн</p>
+                <p>Описание: {{ product.description }}</p>
+                <p>Вес: {{ product.weight }} </p>
+                <p>
+                    {% if product.category.slug == 'pizza' %}
+                        Диаметр: {{ product.diameter }} см
+                    {% else %}
+                        Количество: {{ product.quantity }}
+                    {% endif %}
+                </p>
+                <p>Состав: {{ product.composition }}</p>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+    </div>
+    <!-- /.container -->
+</footer>
+
+
+{% endblock content %}
+
+
+
+
+

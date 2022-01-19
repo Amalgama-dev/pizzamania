@@ -1,0 +1,64 @@
+{% extends 'main/index.html' %}
+
+
+{% block content %}
+<h3 class="text-center mt-5 mb-5">Ваша корзина {% if not cart.products.count %}пуста{% endif %}</h3>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Наименование</th>
+        <th scope="col">Изображение</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Кол-во</th>
+        <th scope="col">Общая цена</th>
+        <th scope="col">Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in cart.products.all %}
+            <tr>
+              <th scope="row">{{ item.content_object.title }}</th>
+              <td class="w-25"><img src="{{ item.content_object.image.url }}" class="img-fluid"></td>
+              <td>{{ item.content_object.price }} Грн</td>
+              <td>
+                <form action="{% url 'change_qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}" method="POST">
+                  {% csrf_token %}
+                  <input type="number" class="form-control" name="qty" style="width: 60px;" min="1" value="{{ item.qty }}" oninput="updateAmount('{{item.content_object.get_model_name}}', '{{item.content_object.slug}}', this.value)">
+                </form>
+              </td>
+              <td class='item-final-price' id='final-price-{{item.content_object.slug}}'>{{ item.final_price }} Грн</td>
+              <td>
+                <a href="{% url 'delete_from_cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}"><button class="btn btn-danger">Удалить из корзины</button></a>
+              </td>
+    
+            </tr>
+        {% endfor %}
+            <tr>
+              <td colspan="2"> </td>
+              <td>Сумма:</td>
+              <td>{{ cart.total_products }}</td>
+              <td id='final-price'>{{ cart.final_price }} Грн</td>
+              <td><a href="{% url 'checkout' %}"><button class="btn btn-primary">Оформление заказа</button></a></td>
+            </tr>
+    </tbody>
+</table>
+{% endblock content %}
+
+{% block additional_scripts %} 
+  <script> 
+    function updateAmount(ct_model, slug, amount){
+      var url = "{% url 'update-cart-product-amount' ct_model=0 slug=1 new_amount=2 %}".replace(0, ct_model).replace(1, slug).replace(2, amount);
+      $.get(url, function(data) {
+        data = JSON.parse(data);
+        if(data.status == 'ok'){
+          var itemFinalPriceElement = document.getElementById(`final-price-${slug}`);
+          itemFinalPriceElement.textContent = `${data.item_final_price},00 грн`;
+          
+          var finalPriceElement = document.getElementById('final-price');
+          finalPriceElement.textContent = `${data.final_price},00 грн`;
+        }
+      })
+    }
+  </script>
+{% endblock %}

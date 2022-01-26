@@ -1,10 +1,8 @@
-from django.views.generic.detail import SingleObjectMixin
 from django.views.generic import View
 
-from .models import Category, Cart, Customer, Pizza, Sushi
+from main.models import Cart, Customer
 
 class CartMixin(View):
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             customer = Customer.objects.filter(user=request.user).first()
